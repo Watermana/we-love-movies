@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const controller = require("./theaters.controller");
+const controller = require("./reviews.controller");
 
 router
     .route("/")
