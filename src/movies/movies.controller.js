@@ -16,6 +16,11 @@ async function movieExists(req, res, next) {
 
 
 async function list(req, res, next) {
+    console.log(req.query.is_showing);
+    if(req.query.is_showing) {
+        const data = await moviesService.listShowingMovies();
+        return res.json({data});
+    }
     const data = await moviesService.list();
     res.json({data});
 }
