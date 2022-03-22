@@ -1,15 +1,5 @@
-const { where } = require("../db/connection");
 const knex = require("../db/connection");
-const mapProperties = require("../utils/map-properties");
 const reduceProperties = require("../utils/reduce-properties");
-
-const addCritic = mapProperties({
-   preferred_name: "critic.preferred_name",
-   surname: "critic.surname",
-   organization_name: "critic.organization_name",
-   created_at: "critic.created_at",
-   updated_at: "critic.updated_at",
-});
 
 const reduceCritic = reduceProperties("review_id",{
     critic_created_at: ["critic", "created_at"],
@@ -21,11 +11,12 @@ const reduceCritic = reduceProperties("review_id",{
   
   })
 
-
+//lists all movies from the movies table
 function list() {
-  return knex("movies").select("*");
+  return knex("movies");
 }
 
+// returns a specific movie based on id
 function read(movieId) {
     return knex("movies")
         .select("*")
@@ -33,6 +24,7 @@ function read(movieId) {
         .first();
 }
 
+// returns a list of theaters that are showing a specific movie based on id
 function listTheaters(movieId) {
     return knex("movies_theaters as mt")
         .join("theaters as t", "mt.theater_id", "t.theater_id")
@@ -40,6 +32,8 @@ function listTheaters(movieId) {
         .where({"mt.movie_id": movieId, "mt.is_showing": true});
 }
 
+// lists all reviews for a specific movie based on id.
+//critic that wrote the review is also nested in the review object
 function listReviews(movieId) {
     return knex("reviews as r")
     .join("critics as c", "r.critic_id", "c.critic_id")
@@ -48,6 +42,7 @@ function listReviews(movieId) {
     .then(reduceCritic);
 }
 
+//lists all movies that are currently showing in any theater
 function listShowingMovies() {
     return knex("movies as m")
         .distinct()

@@ -1,7 +1,6 @@
-const { where } = require("../db/connection");
 const knex = require("../db/connection");
 const mapProperties = require("../utils/map-properties");
-const reduceProperties = require("../utils/reduce-properties");
+
 
 const addCritic = mapProperties({
     preferred_name: "critic.preferred_name",
@@ -11,6 +10,8 @@ const addCritic = mapProperties({
     c_updated_at: "critic.updated_at",
   });
 
+// returns first row in reviews table where review_id matches 
+// the id passed into the function
 async function read(review_id) {
     return knex("reviews")
         .select("*")
@@ -18,16 +19,20 @@ async function read(review_id) {
         .first();
 }
 
+//returns all rows in the reviews table
 async function list() {
     return knex("reviews");
 }
 
+// finds the correct row from reviews, then updates it with whatever
+// new data was passed in as updatedReview
 async function update(updatedReview) {
     return knex("reviews")
         .where({review_id: updatedReview.review_id})
         .update(updatedReview, "*");
 }
 
+// returns a specific review object with the critic nested inside
 async function listReviewWithCritic(review_id) {
     return knex("reviews as r")
     .join("critics as c", "r.critic_id", "c.critic_id")
@@ -37,6 +42,7 @@ async function listReviewWithCritic(review_id) {
     .then(addCritic);
 }
 
+// deletes a given row from reviews based on id
 async function destroy(review_id) {
     return knex("reviews")
         .where({review_id})

@@ -1,6 +1,4 @@
-const { where, select } = require("../db/connection");
 const knex = require("../db/connection");
-const mapProperties = require("../utils/map-properties");
 const reduceProperties = require("../utils/reduce-properties");
 
 const reduceMovies = reduceProperties("theater_id", {
@@ -17,6 +15,8 @@ const reduceMovies = reduceProperties("theater_id", {
     movie_updated_at: ["movies", null, "updated_at"],
 })
 
+//queries the theaters table, then join movies and reduces them into an array of movie objects within
+// each theater object
 function read() {
     return knex("theaters as t")
         .join("movies_theaters as mt", "mt.theater_id", "t.theater_id")
